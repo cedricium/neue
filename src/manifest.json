@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "neue",
+  "version": "1.0.0",
+
+  "description": "",
+
+  "permissions": [
+    "*://*.new/",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  }
+}

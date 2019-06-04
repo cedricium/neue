@@ -1,0 +1,12 @@
+{
+  "name": "neue",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "web-ext run -s src/ --bc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cedric Amaya <amaya.cedric@gmail.com> (https://cedric.tech/)",
+  "license": "MIT"
+}
