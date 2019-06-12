@@ -1,42 +1,33 @@
-const TYPES_MAP = {
-  "blog": "https://medium.com/new-story",
-  "drawing": "https://docs.google.com/drawings/create",
-  "email": "https://mail.google.com/mail/u/0/#inbox?compose=new",
-  "gif": "https://giphy.com/upload",
-  "gist": "https://gist.github.com/",
-  "image": "https://imgur.com/upload",
-  "issue": null,
-  "pen": "https://codepen.io/pen",
-  "pin": "https://www.pinterest.com/pin-builder",
-  "post": "https://www.reddit.com/submit",
-  "product": "https://www.producthunt.com/posts/new",
-  "project": "https://www.behance.net/portfolio/editor",
-  "repo": "https://github.com/new",
-  "sandbox": "https://codesandbox.io/s/",
-  "shot": "https://dribbble.com/shots/new",
-  "subreddit": "https://www.reddit.com/subreddits/create",
-  "thread": "https://spectrum.chat/new/thread",
-  "tweet": "https://twitter.com/compose/tweet",
-}
+(function() {
+  chrome.storage.sync.get('licenseKey', function(items) {
+    authCache.licenseKey = items.licenseKey || null
+  })
+  chrome.storage.onChanged.addListener(function (changes, area) {
+    console.log(changes, area)
+    if (area === 'sync' && 'licenseKey' in changes) {
+      authCache.licenseKey = changes.licenseKey.newValue
+    }
+  })
+})()
+
+let authCache = {}
 
 function redirect(details) {
-  let blockingResponse = {
-    redirectUrl: ''
-  }
-  // 1. Validate user is authenticated to use service
-  //    - chrome.storage.sync.get('auth') --> validated: Boolean
-
-  // 2. If validated...
+  let redirectUrl = ''
   const { url } = details
   const productOrServiceType = url.split('://')[1].split('.')[0]
-  blockingResponse.redirectUrl = TYPES_MAP[productOrServiceType]
+  const licenseKey = authCache.licenseKey || null
 
-  // 3. If not validated:
-  //    - check URL in blacklist (Google services: doc.new, sheet.new, slide.new, etc.)
-  //    - open `license.html` page --> opportunity to purchase and/or input license
-  blockingResponse.redirectUrl = ''// chrome.createUrl(`license.html`)
-
-  return blockingResponse
+  if (BLACK_LIST.includes(productOrServiceType)) {
+    return
+  } else if (authCache && Object.keys(authCache).length > 0 && licenseKey) {
+    redirectUrl = TYPES_MAP[productOrServiceType]
+  } else {
+    // 3. If not validated:
+    //    - open `license.html` page --> opportunity to purchase and/or input license
+    redirectUrl = 'https://www.example.com/'// chrome.createUrl(`license.html`)
+  }
+  return { redirectUrl }
 }
 
 chrome.webRequest.onBeforeRequest.addListener(
@@ -44,3 +35,12 @@ chrome.webRequest.onBeforeRequest.addListener(
   { urls: ['*://*.new/'] },
   [ 'blocking' ],
 )
+
+// TODO - remove before publishing
+chrome.browserAction.onClicked.addListener(function(tabs) {
+  const auth = {
+    licenseKey: 'asdf-qwerty-poiuy-2342jk',
+  }
+  chrome.storage.sync.set(auth)
+  // chrome.storage.sync.clear()
+})
