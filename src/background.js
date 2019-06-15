@@ -44,3 +44,14 @@ chrome.browserAction.onClicked.addListener(function(tabs) {
   // chrome.storage.sync.set(auth)
   chrome.storage.sync.clear()
 })
+
+chrome.runtime.onInstalled.addListener(function(details) {
+  const { reason } = details
+  if (reason === 'install') {
+    const licenseUrl = chrome.runtime.getURL('pages/license/build/index.html')
+    chrome.tabs.create({
+      url: licenseUrl,
+      active: true,
+    })
+  }
+})
