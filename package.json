@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "web-ext run -s src/ --bc",
+    "dev": "concurrently --kill-others \"web-ext run -f nightly -s src/\" \"yarn run watch:pages\"",
+    "watch:pages": "cd src/pages/license/ && yarn run watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Cedric Amaya <amaya.cedric@gmail.com> (https://cedric.tech/)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^4.1.0"
+  }
 }
