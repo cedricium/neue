@@ -1,5 +1,4 @@
 process.env.NODE_ENV = 'development'
-process.env.INLINE_RUNTIME_CHUNK = false
 
 const fs = require('fs-extra')
 const paths = require('react-scripts/config/paths')

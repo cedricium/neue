@@ -1,4 +1,7 @@
+/* global chrome */
+
 import React, { useState } from 'react';
+import axios from 'axios'
 import styled from 'styled-components'
 
 const AppWrapper = styled.main`
@@ -30,10 +33,54 @@ const LicenseForm = styled.form`
   align-items: flex-start;
 `
 
+const ErrorWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: rem 0;
+
+  background: #feb2b2;
+  color: #742a2a;
+`
+
 function App() {
   const [license, setLicense] = useState('')
+  const [error, setError] = useState('')
 
   const register = async (e) => {
+    e.preventDefault()
+    try {
+      const { data } = await axios.post(
+        process.env.REACT_APP_GUMROAD_LICENSE_VERIFICATION_URL, {
+          product_permalink: process.env.REACT_APP_GUMROAD_NEUE_PRODUCT_PERMALINK,
+          license_key: license
+        }
+      )
+      const { success, uses, purchase } = data
+      if (success && uses <= process.env.REACT_APP_GUMROAD_MAX_LICENSE_USES
+        && !purchase.refunded && !purchase.chargebacked) {
+        chrome.storage.sync.set({
+          licenseKey: data.purchase.license_key
+        })
+      } else {
+        if (uses > process.env.REACT_APP_GUMROAD_MAX_LICENSE_USES) {
+          setError('License registration exceeded the max number of uses.')
+        } else {
+          setError('License is invalid due to being refunded or chargebacked.')
+        }
+      }
+    } catch (error) {
+      if (error.response) {
+        // Gumroad-specified error
+        setError(error.response.data.message)
+      } else if (error.request) {
+        // Unable to get response from Gumroad--probably internet-connection issue
+        setError('Could not verify license key. Ensure you are connected to the internet.')
+      } else {
+        setError(error.message)
+      }
+    }
   }
 
   return (
@@ -48,7 +95,7 @@ function App() {
             Thank you for trying neue! To get started, please check your receipt
             or Gumroad library and enter your license key to continue.
           </p>
-          <LicenseForm>
+          <LicenseForm onSubmit={register}>
             <label>
               License Key:
             </label>
@@ -59,6 +106,12 @@ function App() {
               onChange={e => setLicense(e.target.value)}
             />
             <input type="submit" value="Register" disabled={!license} />
+
+            {error && (
+              <ErrorWrapper>
+                <p>{error}</p>
+              </ErrorWrapper>
+            )}
           </LicenseForm>
         </section>
 

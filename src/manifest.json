@@ -11,8 +11,11 @@
 
   "description": "",
 
+  "content_security_policy": "script-src 'self' https://api.gumroad.com/*; object-src 'self'",
+
   "permissions": [
     "*://*.new/",
+    "https://api.gumroad.com/*",
     "storage",
     "webRequest",
     "webRequestBlocking"
