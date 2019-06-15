@@ -25,7 +25,7 @@ function redirect(details) {
   } else {
     // 3. If not validated:
     //    - open `license.html` page --> opportunity to purchase and/or input license
-    redirectUrl = 'https://www.example.com/'// chrome.createUrl(`license.html`)
+    redirectUrl = chrome.runtime.getURL('pages/license/build/index.html')
   }
   return { redirectUrl }
 }
@@ -41,6 +41,6 @@ chrome.browserAction.onClicked.addListener(function(tabs) {
   const auth = {
     licenseKey: 'asdf-qwerty-poiuy-2342jk',
   }
-  chrome.storage.sync.set(auth)
-  // chrome.storage.sync.clear()
+  // chrome.storage.sync.set(auth)
+  chrome.storage.sync.clear()
 })

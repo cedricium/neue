@@ -26,5 +26,9 @@
     "persistent": true
   },
 
+  "web_accessible_resources": [
+    "pages/*/build/*"
+  ],
+
   "browser_action": {}
 }
