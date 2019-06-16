@@ -2,51 +2,34 @@
 
 import React, { useState } from 'react';
 import axios from 'axios'
-import styled from 'styled-components'
 
-const AppWrapper = styled.main`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const AppContainer = styled.div`
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-
-  @media (max-width: 720px) {
-    margin: 0 1rem;
-  }
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-`
-
-const LicenseForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-items: flex-start;
-  align-items: flex-start;
-`
-
-const ErrorWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: rem 0;
-
-  background: #feb2b2;
-  color: #742a2a;
-`
+import {
+  AppWrapper,
+  AppContainer,
+  PageSection,
+  LicenseForm,
+  FormLabel,
+  FormInput,
+  FormButton,
+  PurchaseLink,
+} from './styles'
 
 function App() {
   const [license, setLicense] = useState('')
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const alertMessage = (type, message) => {
+    switch(type) {
+      case 'failure':
+        alert(`Uh oh! ${message}`)
+        break
+      case 'success':
+        alert(`Success! ${message}`)
+        break
+      default:
+        break
+    }
+  }
 
   const register = async (e) => {
     e.preventDefault()
@@ -54,7 +37,7 @@ function App() {
       const { data } = await axios.post(
         process.env.REACT_APP_GUMROAD_LICENSE_VERIFICATION_URL, {
           product_permalink: process.env.REACT_APP_GUMROAD_NEUE_PRODUCT_PERMALINK,
-          license_key: license
+          license_key: license.trim()
         }
       )
       const { success, uses, purchase } = data
@@ -65,20 +48,24 @@ function App() {
         })
       } else {
         if (uses > process.env.REACT_APP_GUMROAD_MAX_LICENSE_USES) {
-          setError('License registration exceeded the max number of uses.')
+          alertMessage('failure',
+            'License registration exceeded the max number of uses.')
         } else {
-          setError('License is invalid due to being refunded or chargebacked.')
+          alertMessage('failure',
+            'License is invalid due to being refunded or chargebacked.')
         }
       }
     } catch (error) {
       if (error.response) {
         // Gumroad-specified error
-        setError(error.response.data.message)
+        alertMessage('failure',
+          error.response.data.message)
       } else if (error.request) {
         // Unable to get response from Gumroad--probably internet-connection issue
-        setError('Could not verify license key. Ensure you are connected to the internet.')
+        alertMessage('failure',
+          'Could not verify license key. Ensure you are connected to the internet.')
       } else {
-        setError(error.message)
+        alertMessage('failure', error.message)
       }
     }
   }
@@ -88,59 +75,59 @@ function App() {
       <AppContainer>
         <h3>neue</h3>
         <h1>License Registration</h1>
-
-        {/* License Registration / Validation */}
-        <section>
+        <PageSection>
           <p>
             Thank you for trying neue! To get started, please check your receipt
             or Gumroad library and enter your license key to continue.
           </p>
           <LicenseForm onSubmit={register}>
-            <label>
+            <FormLabel>
               License Key:
-            </label>
-            <input
+            </FormLabel>
+            <FormInput
               type="text"
-              placeholder="xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx"
+              placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX"
               value={license}
-              onChange={e => setLicense(e.target.value)}
+              onChange={e => setLicense((e.target.value).trim())}
             />
-            <input type="submit" value="Register" disabled={!license} />
-
-            {error && (
-              <ErrorWrapper>
-                <p>{error}</p>
-              </ErrorWrapper>
-            )}
+            <FormButton
+              as="input"
+              type="submit"
+              value="Register"
+              disabled={!license}
+            />
           </LicenseForm>
-        </section>
-
-        {/* License Purchase */}
-        <section>
+        </PageSection>
+        <PageSection>
           <p>
             Don't have a license? Click the button below to buy one now:
           </p>
-          <button
-          // onClick={}
+          <PurchaseLink
+            as="a"
+            href="https://gumroad.com/products/UCxbl"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Purchase License
-          </button>
-        </section>
-
-        {/* Help + Contact */}
-        <section>
+          </PurchaseLink>
+        </PageSection>
+        <PageSection>
           <p>
             Already purchased your copy of neue but did not receive a license?
             Please{` `}
-            <a href="" target="_blank">
+            <a
+              href={process.env.REACT_APP_LICENSE_SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               contact us
             </a>
             {` `}and we would be happy to help you out.
           </p>
-        </section>
+        </PageSection>
       </AppContainer>
     </AppWrapper>
-  );
+  )
 }
 
 export default App;
