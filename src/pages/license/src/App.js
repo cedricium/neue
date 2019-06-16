@@ -33,6 +33,7 @@ function App() {
 
   const register = async (e) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_GUMROAD_LICENSE_VERIFICATION_URL, {
@@ -68,6 +69,7 @@ function App() {
         alertMessage('failure', error.message)
       }
     }
+    setLoading(false)
   }
 
   return (
@@ -93,7 +95,7 @@ function App() {
             <FormButton
               as="input"
               type="submit"
-              value="Register"
+              value={loading ? 'Registering...' : 'Register'}
               disabled={!license}
             />
           </LicenseForm>
