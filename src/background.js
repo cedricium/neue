@@ -23,8 +23,6 @@ function redirect(details) {
   } else if (authCache && Object.keys(authCache).length > 0 && licenseKey) {
     redirectUrl = TYPES_MAP[productOrServiceType]
   } else {
-    // 3. If not validated:
-    //    - open `license.html` page --> opportunity to purchase and/or input license
     redirectUrl = chrome.runtime.getURL('pages/license/build/index.html')
   }
   return { redirectUrl }
@@ -35,15 +33,6 @@ chrome.webRequest.onBeforeRequest.addListener(
   { urls: ['*://*.new/'] },
   [ 'blocking' ],
 )
-
-// TODO - remove before publishing
-chrome.browserAction.onClicked.addListener(function(tabs) {
-  const auth = {
-    licenseKey: 'asdf-qwerty-poiuy-2342jk',
-  }
-  // chrome.storage.sync.set(auth)
-  chrome.storage.sync.clear()
-})
 
 chrome.runtime.onInstalled.addListener(function(details) {
   const { reason } = details
