@@ -11,6 +11,10 @@
 
   "description": "",
 
+  "icons": {
+    "128": "assets/icon-128.png"
+  },
+
   "content_security_policy": "script-src 'self' https://api.gumroad.com/*; object-src 'self'",
 
   "permissions": [

@@ -3,7 +3,10 @@
 import React, { useState } from 'react';
 import axios from 'axios'
 
+import { ReactComponent as Logo } from './assets/neue-wordmark.svg'
+
 import {
+  LogoWrapper,
   AppWrapper,
   AppContainer,
   PageSection,
@@ -12,6 +15,7 @@ import {
   FormInput,
   FormButton,
   PurchaseLink,
+  AppHeading,
 } from './styles'
 
 function App() {
@@ -75,11 +79,13 @@ function App() {
   return (
     <AppWrapper>
       <AppContainer>
-        <h3>neue</h3>
-        <h1>License Registration</h1>
+        <LogoWrapper>
+          <Logo />
+        </LogoWrapper>
+        <AppHeading>License Registration</AppHeading>
         <PageSection>
           <p>
-            Thank you for trying neue! To get started, please check your receipt
+            Thank you for trying Neue! To get started, please check your receipt
             or Gumroad library and enter your license key to continue.
           </p>
           <LicenseForm onSubmit={register}>
@@ -115,7 +121,7 @@ function App() {
         </PageSection>
         <PageSection>
           <p>
-            Already purchased your copy of neue but did not receive a license?
+            Already purchased your copy of Neue but did not receive a license?
             Please{` `}
             <a
               href={process.env.REACT_APP_LICENSE_SUPPORT_URL}

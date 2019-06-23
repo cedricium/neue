@@ -1,7 +1,13 @@
 import styled from 'styled-components'
 
+export const LogoWrapper = styled.div`
+  width: 100%;
+  max-width: 7rem;
+  display: flex;
+`
+
 export const AppWrapper = styled.main`
-  color: #222222;
+  color: #151515;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -21,6 +27,10 @@ export const AppContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+`
+
+export const AppHeading = styled.h1`
+  margin: 1rem 0 auto;
 `
 
 export const LicenseForm = styled.form`
@@ -75,7 +85,7 @@ export const FormButton = styled(Button)`
 
 export const PurchaseLink = styled(Button)`
   margin: 1rem 0 0;
-  color: #222222;
+  color: #151515;
   background: #efefef;
   text-decoration: none;
 
