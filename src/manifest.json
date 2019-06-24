@@ -7,15 +7,13 @@
 
   "manifest_version": 2,
   "name": "neue",
-  "version": "1.0.0",
+  "version": "0.0.1-beta",
 
   "description": "",
 
   "icons": {
     "128": "assets/icon-128.png"
   },
-
-  "content_security_policy": "script-src 'self' https://api.gumroad.com/*; object-src 'self'",
 
   "permissions": [
     "*://*.new/",
